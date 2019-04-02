@@ -4,12 +4,15 @@ from django.db.models.signals import post_save
 
 # Create your models here.
     
+class FoodType(models.Model):
+    food_type = models.CharField(max_length = 200)
+
 class FoodItem(models.Model):
     name = models.CharField(max_length = 200)
     price = models.PositiveIntegerField(default = 100)
     is_active = models.BooleanField(default= True)
-    code = models.PositiveIntegerField(unique = True,null = True)
-
+    food_type = models.ForeignKey(FoodType,on_delete=models.CASCADE) 
+    
     def __str__(self):
         return self.name
 
