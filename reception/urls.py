@@ -1,5 +1,6 @@
 from django.urls import path,include
 from . import views
 urlpatterns = [
-    path('',views.index , name="reception")
+    path('staff',views.index , name="reception"),
+    path('',views.index, name = "Menu presentation")
 ]
