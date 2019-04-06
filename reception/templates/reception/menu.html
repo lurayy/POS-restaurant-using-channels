@@ -10,5 +10,38 @@
 </head>
 <body>
     <h1>Menu</h1>
+
+    <h1>Test</h1>
+    <button>Get Orders</button>
+    <button>Order this food</button>
+    <script>
+        
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host
+        );
+
+        chatSocket.onopen = function(e) {
+            console.log("Is Connected")
+        }
+
+        chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            //parseInfo(data);
+            console.log(data);
+        }
+
+        chatSocket.onclose = function(e) {
+            console.error('Socket Is Closed');
+            //alert smth and reconnect to the socket
+        }
+
+        function sendData(info){
+            chatSocket.send(JSON.stringify(info));
+        }
+
+        function loadMore() { 
+            console.log("loading more")
+        }
+    </script>
 </body>
 </html>
