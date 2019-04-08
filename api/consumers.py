@@ -19,7 +19,7 @@ class StaffConsumer(WebsocketConsumer):
         )
 
     def get_order(self,data):
-        response = {'type':'get_order_response','state':data['state'], 'order': []}
+        response = {'type':'getOrderResponse','state':data['state'], 'order': []}
         orders = Order.objects.filter(
             state = data['state']
         )
@@ -54,13 +54,6 @@ class StaffConsumer(WebsocketConsumer):
         print("Connecting Incommnig")
         self.accept()
         print("Connection Accepted")
-        inital_data = {
-            'type': 'get_order',
-            'from':0,
-            'to':10,
-            'state':'PENDING'
-        } 
-        self.get_order(inital_data)
     
     def disconnect(self, close_code):
         async_to_sync (self.channel_layer.group_discard)(
@@ -71,12 +64,14 @@ class StaffConsumer(WebsocketConsumer):
     def receive(self, text_data):        
         data = json.loads(text_data)
         type = data['type']
-        if type == "get_order":
+        if type == "getOrder":
             self.get_order(data)
-        elif type == "modify_order":
+        elif type == "modifyOrder":
             self.modify_order(data)
+        elif type == "setOrder":
+            self.set_order()
         else:
-            print(text_data)
+            self.handle_error()
     
     def staff_message(self,event):
         print("send staff")
@@ -84,3 +79,23 @@ class StaffConsumer(WebsocketConsumer):
         async_to_sync (self.send(text_data = json.dumps({
             'message':message
         })))
+
+    #imporvise this code make it adapt
+    def order(data):
+        #data is send as a set of arrays wrapped in a dict.
+        #eg. data = {type: "setOrder", table_number: 2,order:[{food_code:2,quantity:3},{food_code:1,quantity:3},{food_code:3,quantity:1}]}
+        response = {}
+        response['type'] = "order_response"
+        table_number = data['table_number']
+        ordered_food_items = data['order']
+        current_order = Order.objects.create(table_number = table_number)
+        for x in ordered_food_items:
+            try:
+                food_item = FoodItem.objects.get(code = int(x['food_code']))
+                print("good food")
+            except:
+                #write a proper failure action
+                response['']
+            OrderedItem.objects.create(order = current_order,food_item = food_item,quantity = int(x['quantity']))
+            # total_cost = int(food_item.price)*x['quantity']+total_cost
+        
