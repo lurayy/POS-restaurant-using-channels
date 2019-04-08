@@ -5,13 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Menu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css">
-    <script src="main.js"></script>
 </head>
 <body>
     <h1>Menu</h1>
 
     <h1>Test</h1>
+    <button onclick=getMenu()>Get Menu</button>
     <button>Get Orders</button>
     <button>Order this food</button>
     <script>
@@ -21,7 +20,7 @@
         );
 
         chatSocket.onopen = function(e) {
-            console.log("Is Connected")
+            console.log("Is Connected");
         }
 
         chatSocket.onmessage = function(e) {
@@ -41,6 +40,14 @@
 
         function loadMore() { 
             console.log("loading more")
+        }
+
+        function getMenu()
+        {
+            info = {
+                'type': "getMenu",
+            }
+            chatSocket.send(JSON.stringify(info))
         }
     </script>
 </body>

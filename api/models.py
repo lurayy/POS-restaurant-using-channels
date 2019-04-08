@@ -48,6 +48,9 @@ class Staff(CustomUser):
 class FoodType(models.Model):
     food_type = models.CharField(max_length = 200,null = True)
 
+    def __str__(self):
+        return str(self.food_type)
+
 
 class FoodItem(models.Model):
     name = models.CharField(max_length = 200)
@@ -67,12 +70,18 @@ class Order(models.Model):
     state = models.CharField(max_length=8, choices=STATES, default='PENDING')
     timestamp = models.DateTimeField(default=timezone.now)
     table_number = models.PositiveIntegerField(null = True)
+
+    def __str__(self):
+        return str(self.table_number)
  
 
 class OrderedItem(models.Model):
     order = models.ForeignKey(Order,on_delete= models.CASCADE)
     food_item = models.ForeignKey(FoodItem, on_delete = models.CASCADE)
     quantity = models.IntegerField()
+
+    def __str__(self):
+        return str(self.order.table_number) + " ,  " + str(self.food_item)
 
 # def send_ordered_item (sender, instance,**kwargs):
 #     print(instance)

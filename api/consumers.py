@@ -1,7 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer 
 import json
 from asgiref.sync import async_to_sync
-from .models import Order, OrderedItem, FoodItem, CustomUser
+from .models import Order, OrderedItem, FoodItem, CustomUser, FoodType
 
 GROUP_NAME = 'reception'
 
@@ -51,8 +51,23 @@ class StaffConsumer(WebsocketConsumer):
     def handle_error(self,data):
         pass
 
-    def get_menu(self,data):
-        pass
+    def get_menu(self):
+        response = {"type":"getMenuResponse", "food_type": [], "food_items": []}
+        food_items = FoodItem.objects.all()
+        food_types = FoodType.objects.all()
+        for food_item in food_items:
+            if food_item.is_active:
+                response["food_items"].append({"id": food_item.id,
+                                            "food_type": food_item.food_type.food_type,
+                                            "name": food_item.name,
+                                            "price": float(food_item.price),
+                                            # "image": str(product.image)
+                                            })
+        for food_type in food_types:
+            response["food_type"].append({"id": food_type.id,
+                                           "name": food_type.food_type
+                                           })
+        self.send_response(response)
     
 
     def connect(self):
