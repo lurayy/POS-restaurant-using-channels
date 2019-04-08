@@ -8,8 +8,7 @@ GROUP_NAME = 'reception'
 class StaffConsumer(WebsocketConsumer):
 
     def send_response(self,response):
-        print('send_response')
-        print(response)
+        print('sending response for',response['type'])
         async_to_sync (self.channel_layer.group_send)(
             GROUP_NAME,
             {
@@ -43,8 +42,18 @@ class StaffConsumer(WebsocketConsumer):
             })
         self.send_response(response)
     
+    def set_order(self,data):
+        pass
+
     def modify_order(self,data):
         pass
+    
+    def handle_error(self,data):
+        pass
+
+    def get_menu(self,data):
+        pass
+    
 
     def connect(self):
         async_to_sync (self.channel_layer.group_add)(
@@ -70,6 +79,8 @@ class StaffConsumer(WebsocketConsumer):
             self.modify_order(data)
         elif type == "setOrder":
             self.set_order()
+        elif type == "getMenu":
+            self.get_menu()
         else:
             self.handle_error()
     
